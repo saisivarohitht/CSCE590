@@ -49,10 +49,10 @@ java -jar -Xmx8G build/libs/graph-0.0.1-SNAPSHOT.jar
 
 **APIs**
 
-**Find API**
+**Find API** \
 curl -X POST "http://localhost:8080/find" -H "Content-Type: application/json" -d '["Aygun, Sercan", "Sercan Aygun", "Martin Margala","Chaudhry, Beenish Moalla", "Li Chen", "Sheng Chen", "Chee-Hung Henry Chu", "Shuvalaxmi Dass", "Ramesh Kolluru", "Anthony Maida" ]'
 
-**Search API**
+**Search API** \
 curl -X GET "http://localhost:8080/search/Michael%20W%20Totaro" \
 curl -X GET "http://localhost:8080/search/Martin%20Margala" \
 curl -X GET "http://localhost:8080/search/Ramesh%20Kolluru"
