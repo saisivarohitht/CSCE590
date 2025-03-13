@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Extraction and analysis of subgraphs from online networks</title>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+      <link rel="stylesheet" href="graph.css">
+      <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+      <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+      <script src="https://d3js.org/d3.v7.min.js"></script>
+      <script>
+      $(function() {
+    	  
+    	  // Get all person names from dblp
+          var personNames = [];
+          let xhr = new XMLHttpRequest();
+          xhr.open("GET", '/search/*');
+          xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+          xhr.send()
+          xhr.onload = (e) => {
+             personNames = JSON.parse(xhr.response);
+          }
+
+          function split(val) {
+             return val.split(/,\s*/);
+          }
+
+          function extractLast(term) {
+             return split(term).pop();
+          }
+
+          function generateGraph(names) {
+             // Set cursor as hourglass
+             document.body.style.cursor = "wait";
+
+             let xhr = new XMLHttpRequest();
+             let namesJson = JSON.stringify(names);
+             xhr.open("POST", '/find');
+             xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+             xhr.send(namesJson)
+             xhr.onload = (e) => {
+                data = xhr.response;
+                refreshGraph(data);
+                document.getElementById("graph").focus()
+
+                // Set cursor as default arrow
+                document.body.style.cursor = "default";
+             }
+          }
+
+          function refreshGraph(data) {
+             var container = document.getElementById("graph");
+             var content = container.innerHTML;
+             container.innerHTML = "";
+             refresh(data);
+          }
+
+          function refresh(graph) {
+
+             data = JSON.parse(graph);
+             const svg = d3.select("svg");
+             
+             const simulation = d3.forceSimulation(data.nodes)
+               .force("link", d3.forceLink(data.links).id(d => d.id))
+               .force("charge", d3.forceManyBody())
+               .force("center", d3.forceCenter(250, 250))
+               .force("x", d3.forceX().strength(0.1))
+               .force("y", d3.forceY().strength(0.1));
+             
+             const link = svg.selectAll(".link")
+               .data(data.links)
+               .enter().append("line")
+               .attr("class", "link");
+             
+             const node = svg.selectAll(".node")
+               .data(data.nodes)
+               .enter().append("g")
+               .attr("class", "node")
+               .call(drag(simulation));
+             
+             node.append("circle")
+               .attr("r", 10)
+               .attr("fill", function(d) {
+                            return 'red';
+                         });
+             
+             node.append("text")
+               .text(d => d.id);
+             
+             simulation.on("tick", () => {
+               link.attr("x1", d => Math.max(0, Math.min(600, d.source.x)))
+                 .attr("y1", d => Math.max(0, Math.min(600, d.source.y)))
+                 .attr("x2", d => Math.max(0, Math.min(600, d.target.x)))
+                 .attr("y2", d => Math.max(0, Math.min(600, d.target.y)));
+             
+               node.attr("transform", d => `translate(${Math.max(10, Math.min(490, d.x))},${Math.max(10, Math.min(490, d.y))})`);
+             });
+             
+             function drag(simulation) {
+               function dragstarted(event, d) {
+                 if (!event.active) simulation.alphaTarget(0.3).restart();
+                 d.fx = d.x;
+                 d.fy = d.y;
+               }
+             
+               function dragged(event, d) {
+                 d.fx = event.x;
+                 d.fy = event.y;
+               }
+             
+               function dragended(event, d) {
+                 if (!event.active) simulation.alphaTarget(0);
+                 d.fx = null;
+                 d.fy = null;
+               }
+
+           return d3.drag()
+             .on("start", dragstarted)
+             .on("drag", dragged)
+             .on("end", dragended);
+          }};
+
+          $("#tags")
+             // don't navigate away from the field on tab when selecting an item
+             .on("keydown", function(event) {
+                if (event.keyCode === $.ui.keyCode.TAB &&
+                   $(this).autocomplete("instance").menu.active) {
+                   event.preventDefault();
+                } else if (event.keyCode === $.ui.keyCode.ENTER) { // on pressing Enter key
+                   var names = document.getElementById('tags').value.trim();
+                   if (names.substring(names.length - 1) == ","); {
+                      names = names.substring(0, names.length - 1); // remove last character, if it is comma
+                   }
+                   var nameArr = names.split(',');
+
+                   generateGraph(nameArr);
+                }
+             })
+             .autocomplete({
+                minLength: 2,
+                source: function(request, response) {
+                   // delegate back to autocomplete, but extract the last term
+                   var results = $.ui.autocomplete.filter(personNames, extractLast(request.term));
+                   response(results.slice(0, 20));
+                },
+                focus: function() {
+                   // prevent value inserted on focus
+                   return false;
+                },
+                select: function(event, ui) {
+                   var terms = split(this.value);
+                   // remove the current input
+                   terms.pop();
+                   // add the selected item
+                   terms.push(ui.item.value);
+                   // add placeholder to get the comma-and-space at the end
+                   terms.push("");
+                   this.value = terms.join(",");
+                   return false;
+                }
+             });
+       });
+      </script>
+   </head>
+   <body>
+      <div class="ui-widget">
+         <label for="tags">Search (Add) Author names: </label>
+         <input id="tags" size="75">
+      </div>
+      <!-- Create a div where the graph will take place -->
+      <svg id = "graph" width="600" height="600"></svg>
+   </body>
+</html>
