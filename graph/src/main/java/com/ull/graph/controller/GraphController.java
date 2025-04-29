@@ -420,9 +420,7 @@ public class GraphController {
 
     public static void main(String [] args) {
         //generateAuthorsGraphFromOnlineDblpDB();
-    	if(args.length > 2) {
-    		generatePublicationsCountsPerYearFromOfflineDblpDB();
-    		generateAuthorsGraphFromOfflineDblpDB();
-    	}
-    }
+		generatePublicationsCountsPerYearFromOfflineDblpDB();
+		generateAuthorsGraphFromOfflineDblpDB();
+}
 }
