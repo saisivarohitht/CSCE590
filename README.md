@@ -1,59 +1,55 @@
-# CACS590
-Extraction and Analysis of an Online Graph Network
+# Miscellaneous files:
 
-# Week 3 EXPLORE OFFLINE DBLP REPOSITORY
+misc/Terminal Saved Output.txt
+misc/Dblp Statistics.xlsx
 
-1. Download the following into a folder called ‘dblp’
+Setup and Config:
 
-    curl -O https://dblp.org/src/DblpExampleParser.java \
-    curl -O https://dblp.org/src/mmdb-2019-04-29.jar \
-    curl -O https://dblp.org/xml/release/dblp-2019-04-01.xml.gz \
-    curl -O https://dblp.org/xml/release/dblp-2017-08-29.dtd
+graph/dblp.dtd
+graph/HELP.md
+graph/libs/mmdb.jar
+graph/libs/spring-web-6.1.10.jar
+graph/gradle/wrapper/gradle-wrapper.jar
+graph/gradle/wrapper/gradle-wrapper.properties
+graph/build.sh
+graph/gradlew
+graph/build.gradle
+graph/gradlew.bat
+graph/settings.gradle
 
-2. Extract dblp-2019-04-01.xml.gz using ‘gunzip dblp-2019-04-01.xml.gz’
-3. javac -cp mmdb-2019-04-29.jar DblpExampleParser.java
-4. java -Xmx2G -cp mmdb-2019-04-29.jar:. DblpExampleParser dblp-2019-04-01.xml dblp-2017-08-29.dtd
+# Test class
+graph/src/test/java/com/ull/graph/GraphApplicationTests.java
 
+# UI Code:
+graph/src/main/resources/static/graph.html
+graph/src/main/resources/static/graph.css
 
-References:
-https://dblp.org/faq/index.html
-https://dblp.uni-trier.de/xml/
-https://dblp.org/faq/1474681.html
+# Backend Code:
+graph/src/main/resources/application.properties
+graph/src/main/java/com/ull/graph/ServletInitializer.java
+graph/src/main/java/com/ull/graph/GraphApplication.java
+graph/src/main/java/com/ull/graph/utils/SmallWorld.java
+graph/src/main/java/com/ull/graph/utils/Graph6.java
+graph/src/main/java/com/ull/graph/utils/StdOut.java
+graph/src/main/java/com/ull/graph/utils/Graph.java
+graph/src/main/java/com/ull/graph/utils/Queue.java
+graph/src/main/java/com/ull/graph/utils/In.java
+graph/src/main/java/com/ull/graph/utils/StdIn.java
+graph/src/main/java/com/ull/graph/utils/PathFinder.java
+graph/src/main/java/com/ull/graph/utils/ST.java
+graph/src/main/java/com/ull/graph/utils/SET.java
+graph/src/main/java/com/ull/graph/utils/Stack.java
+graph/src/main/java/com/ull/graph/controller/GraphController.java
+graph/src/main/java/com/ull/graph/model/Publication.java
+graph/src/main/java/com/ull/graph/model/Article.java
+graph/src/main/java/com/ull/graph/model/Incollection.java
+graph/src/main/java/com/ull/graph/model/Book.java
+graph/src/main/java/com/ull/graph/model/R.java
+graph/src/main/java/com/ull/graph/model/Inproceedings.java
+graph/src/main/java/com/ull/graph/model/Proceedings.java
+graph/src/main/java/com/ull/graph/model/Dblpperson.java
 
-# Week 4 & Week 5: PROTOTYPE WITH PROSPECTIVE TOOLS & FRAMEWORK 
+# Documents:
 
-**Setup:**
-
-1. Create a Spring Application from https://start.spring.io/ and generate graph.zip
-2. Extract graph.zip file to a folder /home/graph/
-3. ./gradlew clean build
-4. Update the contents of https://github.com/saisivarohith-tamu/CACS590/graph in /home/graph/
-5. Copy https://dblp.org/xml/release/dblp-2019-04-01.xml.gz as dblp.xml.gz to /home/graph/
-
-
-**How to build the code:**
-
-cd /home/graph
-Make sure JAVA_HOME is set to build 23.0.2
-./gradlew clean build
-
-**Execute the code in offline mode**
-
-cd /home/graph
-java -Xmx4g -cp ".:libs/*:build/libs/*" com.ull.graph.controller.GraphController
-Make sure /home/graph/Persons.csv file is created
-
-**Start Spring Boot server (online mode)**
-
-java -jar -Xmx8G build/libs/graph-0.0.1-SNAPSHOT.jar
-
-**APIs**
-
-**Find API** \
-curl -X POST "http://localhost:8080/find" -H "Content-Type: application/json" -d '["Aygun, Sercan", "Sercan Aygun", "Martin Margala","Chaudhry, Beenish Moalla", "Li Chen", "Sheng Chen", "Chee-Hung Henry Chu", "Shuvalaxmi Dass", "Ramesh Kolluru", "Anthony Maida" ]'
-
-**Search API** \
-curl -X GET "http://localhost:8080/search/Michael%20W%20Totaro" \
-curl -X GET "http://localhost:8080/search/Martin%20Margala" \
-curl -X GET "http://localhost:8080/search/Ramesh%20Kolluru"
-
+docs/CSCE 590 Individual Project Proposal.pdf
+docs/CSCE 590 Project Submission.pdf
